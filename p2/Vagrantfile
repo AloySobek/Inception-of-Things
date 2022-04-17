@@ -1,0 +1,34 @@
+$master = <<-SCRIPT
+  home=$(pwd)
+
+  cd /etc/yum.repos.d/
+
+  sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+  sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+  sudo yum update -y
+
+  cd ${home}
+
+  sudo swapoff -a
+  sudo sed -e '/swap/s/^/#/g' -i /etc/fstab
+
+  sudo systemctl disable firewalld --now
+
+  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface eth1" sh -
+SCRIPT
+
+  # helm install --create-namespace --namespace hello-kubernetes custom-message ./hello-kubernetes --set message="I just deployed this on Kubernetes!"
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/8"
+  config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/libvirt.box"
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpus = 2
+    libvirt.memory = 4096
+  end
+  config.vm.define "vricheseS" do |control|
+    control.vm.hostname = "vricheseS"
+    control.vm.network :private_network, :ip => '192.168.42.110'
+    control.vm.provision :shell, :inline => $master
+  end
+end
