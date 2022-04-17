@@ -1,0 +1,48 @@
+$master = <<-SCRIPT
+  sudo swapoff -a
+  sudo sed -e '/swap/s/^/#/g' -i /etc/fstab
+
+  sudo systemctl disable firewalld --now
+
+  curl -sfL https://get.k3s.io | sh -
+
+  sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/node-token
+  sudo cp /etc/rancher/k3s/k3s.yaml /vagrant/config
+SCRIPT
+
+$worker = <<-SCRIPT
+  sudo swapoff -a
+  sudo sed -e '/swap/s/^/#/g' -i /etc/fstab
+
+  sudo systemctl disable firewalld --now
+
+  k3s_url="https://192.168.42.110:6443"
+
+  while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' ${k3s_url})" != "401" ]]; do sleep 5 && echo "Waiting for master..."; done
+
+  until [ -f /vagrant/node-token ]; do sleep 5 && echo "Waiting for token..."; done
+
+  k3s_token="$(sudo cat /vagrant/node-token)"
+
+  curl -sfL https://get.k3s.io | K3S_URL=${k3s_url} K3S_TOKEN=${k3s_token} sh -
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "centos/7"
+  config.vm.box_version = "2004.01"
+  config.vm.synced_folder ".", "/vagrant", type: 'nfs', nfs_udp: false, nfs_version: 4
+  config.vm.provider :libvirt do |libvirt|
+    libvirt.cpus = 1
+    libvirt.memory = 1024
+  end
+  config.vm.define "vricheseS" do |control|
+    control.vm.hostname = "vricheseS"
+    control.vm.network :private_network, :ip => '192.168.42.110'
+    control.vm.provision :shell, :inline => $master
+  end
+  config.vm.define "vricheseSW" do |control|
+    control.vm.hostname = "vricheseSW"
+    control.vm.network :private_network, :ip => '192.168.42.111'
+    control.vm.provision :shell, :inline => $worker
+  end
+end
