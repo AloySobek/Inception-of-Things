@@ -15,7 +15,7 @@ $master = <<-SCRIPT
 
   sudo systemctl disable firewalld --now
 
-  curl -sfL https://get.k3s.io | sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface eth1" sh -
 
   sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/node-token
 SCRIPT
@@ -45,7 +45,7 @@ $worker = <<-SCRIPT
 
   k3s_token="$(sudo cat /vagrant/node-token)"
 
-  curl -sfL https://get.k3s.io | K3S_URL=${k3s_url} K3S_TOKEN=${k3s_token} sh -
+  curl -sfL https://get.k3s.io | K3S_URL=${k3s_url} K3S_TOKEN=${k3s_token} INSTALL_K3S_EXEC="--flannel-iface eth1" sh -
 
   rm /vagrant/node-token
 SCRIPT
