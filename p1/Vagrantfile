@@ -1,4 +1,15 @@
 $master = <<-SCRIPT
+  home=$(pwd)
+
+  cd /etc/yum.repos.d/
+
+  sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+  sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+  sudo yum update -y
+
+  cd ${home}
+
   sudo swapoff -a
   sudo sed -e '/swap/s/^/#/g' -i /etc/fstab
 
@@ -7,10 +18,20 @@ $master = <<-SCRIPT
   curl -sfL https://get.k3s.io | sh -
 
   sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/node-token
-  sudo cp /etc/rancher/k3s/k3s.yaml /vagrant/config
 SCRIPT
 
 $worker = <<-SCRIPT
+  home=$(pwd)
+
+  cd /etc/yum.repos.d/
+
+  sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+  sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+  sudo yum update -y
+
+  cd ${home}
+
   sudo swapoff -a
   sudo sed -e '/swap/s/^/#/g' -i /etc/fstab
 
@@ -25,11 +46,13 @@ $worker = <<-SCRIPT
   k3s_token="$(sudo cat /vagrant/node-token)"
 
   curl -sfL https://get.k3s.io | K3S_URL=${k3s_url} K3S_TOKEN=${k3s_token} sh -
+
+  rm /vagrant/node-token
 SCRIPT
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
-  config.vm.box_version = "2004.01"
+  config.vm.box = "centos/8"
+  config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/libvirt.box"
   config.vm.synced_folder ".", "/vagrant", type: 'nfs', nfs_udp: false, nfs_version: 4
   config.vm.provider :libvirt do |libvirt|
     libvirt.cpus = 1
