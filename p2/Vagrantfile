@@ -15,8 +15,18 @@ $master = <<-SCRIPT
 
   sudo systemctl disable firewalld --now
 
-  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface eth1" sh -
+  curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--flannel-iface eth1 --no-deploy traefik" sh -
+
+  sudo /usr/local/bin/kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.2/deploy/static/provider/cloud/deploy.yaml
+  sudo /usr/local/bin/kubectl apply -f /vagrant/configs/app1.yaml
+  sudo /usr/local/bin/kubectl apply -f /vagrant/configs/app2.yaml
+  sudo /usr/local/bin/kubectl apply -f /vagrant/configs/app3.yaml
+
 SCRIPT
+
+  # kubectl apply -f /vagrant/configs/app1.yaml
+  # kubectl apply -f /vagrant/configs/app2.yaml
+  # kubectl apply -f /vagrant/configs/app3.yaml
 
   # helm install --create-namespace --namespace hello-kubernetes custom-message ./hello-kubernetes --set message="I just deployed this on Kubernetes!"
 Vagrant.configure("2") do |config|
