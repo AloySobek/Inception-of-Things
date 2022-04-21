@@ -31,9 +31,9 @@ spec:
               port: http
           env:
             - name: PORT
-              value: "port"
+              value: "8080"
             - name: MESSAGE
-              value: "Hello from APP #1"
+              value: "Application number 1 is here!"
             - name: KUBERNETES_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -48,3 +48,36 @@ spec:
                   fieldPath: spec.nodeName
             - name: CONTAINER_IMAGE
               value: "paulbouwer/hello-kubernetes:1.10"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app1
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: app1
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app1
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: app1.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app1
+            port:
+              number: 8080
