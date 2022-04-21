@@ -24,11 +24,6 @@ $master = <<-SCRIPT
 
 SCRIPT
 
-  # kubectl apply -f /vagrant/configs/app1.yaml
-  # kubectl apply -f /vagrant/configs/app2.yaml
-  # kubectl apply -f /vagrant/configs/app3.yaml
-
-  # helm install --create-namespace --namespace hello-kubernetes custom-message ./hello-kubernetes --set message="I just deployed this on Kubernetes!"
 Vagrant.configure("2") do |config|
   config.vm.box = "centos/8"
   config.vm.box_url = "https://app.vagrantup.com/centos/boxes/8/versions/2011.0/providers/libvirt.box"
