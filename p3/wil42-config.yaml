@@ -1,0 +1,18 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: cvernius
+  namespace: argocd
+spec:
+  destination:
+    namespace: dev
+    server: 'https://kubernetes.default.svc'
+  project: default
+  source:
+    path: config
+    repoURL: 'https://github.com/rimargri/cvernius.git'
+    targetRevision: HEAD
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
