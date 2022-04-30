@@ -1,0 +1,20 @@
+kind: Application
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: wil42
+  namespace: argocd
+spec:
+  destination:
+    namespace: dev
+    server: "https://kubernetes.default.svc"
+  project: default
+  source:
+    path: config
+    repoURL: "http://gitlab-webservice-default.gitlab:8181/root/wil42.git"
+    targetRevision: dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

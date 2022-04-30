@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wil42
+  labels:
+    app: wil42
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8888
+  selector:
+    app: wil42
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wil42
+                port:
+                  name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wil42
+spec:
+  selector:
+    matchLabels:
+      app: wil42
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wil42
+    spec:
+      containers:
+        - name: wil42
+          image: wil42/playground:v1
+          ports:
+            - containerPort: 8888
