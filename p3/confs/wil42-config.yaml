@@ -6,13 +6,15 @@ metadata:
 spec:
   destination:
     namespace: dev
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
   project: default
   source:
     path: config
-    repoURL: 'https://github.com/rimargri/cvernius.git'
+    repoURL: "https://github.com/rimargri/cvernius.git"
     targetRevision: HEAD
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
