@@ -28,7 +28,7 @@ spec:
     server: "https://kubernetes.default.svc"
   project: development
   source:
-    path: config
+    path: manifests
     repoURL: "https://github.com/rimargri/cvernius.git"
     targetRevision: HEAD
   syncPolicy:
