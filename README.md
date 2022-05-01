@@ -1,5 +1,20 @@
 # Inception-of-Things
 
+Running k3s cluster on VM-s and with k3d.
+
+## Part 1, 2
+
+Runs k3s with Vagrant.
+
+## Part 3, Bonus
+
+Runs k3s with Docker and nested container runtime.
+
+## Principal schema of different k3s deployments
+
+![alt text](images/schema.png)
+
+
 ## Testing environment
 
 Ubuntu 20.04 with amd64 CPU
