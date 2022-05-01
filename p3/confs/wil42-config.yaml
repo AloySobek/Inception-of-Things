@@ -12,6 +12,10 @@ spec:
   destinations:
   - namespace: dev
     server: https://kubernetes.default.svc
+  # Deny all cluster-scoped resources from being created, except for Namespace
+  clusterResourceWhitelist:
+  - group: ''
+    kind: Namespace
 ---
 kind: Application
 apiVersion: argoproj.io/v1alpha1
