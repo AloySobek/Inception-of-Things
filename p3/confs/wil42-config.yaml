@@ -18,21 +18,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: nginx
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: wil42
-                port:
-                  name: http
