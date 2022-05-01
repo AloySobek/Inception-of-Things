@@ -1,3 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: development 
+  namespace: argocd
+spec:
+  description: Development Project
+  # Allow manifests to deploy from any Git repos
+  sourceRepos:
+  - '*'
+  # Only permit applications to deploy to the dev namespace in the same cluster
+  destinations:
+  - namespace: dev
+    server: https://kubernetes.default.svc
+---
 kind: Application
 apiVersion: argoproj.io/v1alpha1
 metadata:
@@ -7,7 +22,7 @@ spec:
   destination:
     namespace: dev
     server: "https://kubernetes.default.svc"
-  project: default
+  project: development
   source:
     path: config
     repoURL: "https://github.com/rimargri/cvernius.git"
